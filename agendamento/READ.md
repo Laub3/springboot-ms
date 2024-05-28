@@ -1,0 +1,1 @@
+Para rodar o app, instale o plugin Makefile ou rode docker compose up

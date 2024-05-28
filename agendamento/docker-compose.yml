@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - my_network
+
+  api-gateway:
+    image: laub3/api-gateway:1.0
+    ports:
+      - "5051:5051"
+    depends_on:
+      - service-discovery
+    networks:
+      - my_network
+
+  service-discovery:
+    image: laub3/service-discovery:1.0
+    ports:
+      - "5050:5050"
+    networks:
+      - my_network
+
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+      - service-discovery
+    ports:
+      - "4040:4040"
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+
+networks:
+  my_network:
+    driver: bridge
